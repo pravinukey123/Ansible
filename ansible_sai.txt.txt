@@ -1,0 +1,244 @@
+vim /etc/ssh/sshd_config
+--> uncomment permit root login
+---> password authentication yes
+
+
+
+
+ssh-i-copy-id ansadmin@private_ip
+-------for not asking again password while taking ssh for local user 
+-------ansadmin is a master machine 
+------private ip ------private ip of node
+
+ansible webserver --list-hosts
+-------for to check the list of group in ansible.cfg 
+webserver is a group in ansible file
+
+
+ansible webserver [0] --list-hosts
+-------the code will be deploy only 1st node of list of group
+
+ansible webserver [1] --list-hosts
+-------the code will be deploy only 2nd node node of list of group
+
+ansible webserver [-1] --list-hosts
+-------the code will be deploy on last node node of list of group
+
+ansible webserver [-2] --list-hosts
+-------the code will be deploy on second-last node node of list of group
+
+ansible webserver [0:4] --list-hosts
+-------the code will be deploy on first five nodes node of list of group (range)
+
+ansible webserver:dbserver --list-hosts
+-------the code will be deploy on multiple groups
+
+ansible webserver[0]:dbserver[1] --list-hosts
+-------the code will be deploy on multiple groups with specific nodes 
+
+ansible all --list-hosts
+-------the code will be deploy on all groups & all nodes
+
+------------------------------------------------------------------------------------------------------------------
+ad-hoc    command
+
+ansible all -m command -a "hostname"
+---------without taking ssh find the name of hostaname of  all groups & all nodes 
+
+
+ansible all -m command -a "date"
+---------without taking ssh find the date of hostaname of  all groups & all nodes
+
+
+ansible all -m command -a "touch saifile"
+---------without taking ssh create file  of  all groups & all nodes
+(but file will be create in current dir of user)
+
+if there will be some warning
+do ----
+vim /etc/ansible/ansible.cfg
+write below defaults
+interpretor_python = auto_silent
+command_warnings = false
+
+
+ansible all  -a "sudo yum install tree -y"
+---------without taking ssh install package in  all groups & all nodes 
+
+ansible all  -a "sudo which tree"
+---------without taking ssh check the installed package in  all groups & all nodes 
+
+
+ansible all -m service -a "name=httpd state=started" -b
+--------without taking ssh start the service
+(state=stop -----to stop)
+
+
+
+session_2
+if we create user with one task only why  we get ok=2
+one for create user & one for setup module
+
+
+while executing the playbook if we missed the become= true......thrn play like
+ansible-playbook abc.yml -b    -----------here -b is become true
+
+
+
+
+---
+- name: This playbook is to create file 
+  host: all
+  become: true
+  tasks:
+   - name: creating a file
+     file: 
+       path: /home/demo_file
+       state: touch                            (note: here state : touch is optional; otherwise it will take bydefault
+-------------------------------------------------------------
+---> here second task will be depends on first task i.e. the use of handlers
+
+- name: This playbook is to install httpd 
+  host: all
+  become: true
+  tasks:
+   - name: creating a file
+     yum:
+       name: httpd
+       state: present
+     notify:  starting service
+
+  handlers:
+   - name: startins service
+     service: httpd
+       name: httpd
+       state: present
+
+---------------------------------------------------------------------------------
+(when moule is a conditinal . it will work as per define the condition. )
+
+- name: This playbook is to install httpd/apache2
+  host: all
+  become: true
+  tasks:
+   - name: creating a file
+     yum:
+       name: httpd
+       state: present
+     when: Ansible_os_family == "Redhat"
+
+   - name: starting service
+     service: httpd
+       name: httpd
+       state: present
+     when: Ansible_os_family == "Redhat"
+
+
+   - name: creating a file
+     apt:
+       name: apache2
+       state: present
+     when: Ansible_os_family == "Debian"
+
+   - name: starting service
+     service: apache2
+       name: apache2
+       state: present
+     when: Ansible_os_family == "Debian"
+------------------------------------------------------------------------------------
+- name: This playbook is to install httpd/apache2
+  host: all
+  become: true
+  tasks:
+   - name: creating a file
+     yum:
+       name: httpd
+       state: present
+     when: Ansible_os_family == "Redhat"
+notify: starting (httpd) service --------------------------------means after install the package  --starting service task will be performed
+
+--------------------------------------------------------------------------------------------------
+  
+---
+- name: This playbook is to install multiple package
+  host: all
+  become: true
+  tasks:
+   - name: install multiple package
+     yum:
+       name: ['git', 'docker', 'httpd']
+       state: present
+
+
+
+
+
+
+
+
+-------------------------------------------------------------ansible-playbook abc.yml -extra-var user=xyz
+---
+- name: This playbook is create user
+  host: all
+  become: true
+  vars_files:
+  - user.yml
+  tasks:
+   - name: create user {{user}}
+     user: 
+       name: "{{user}}"
+
+
+-------------------------------------------------------------------------------------------------- 
+ansible-vault create test_pravin.yml   --------------to create encypted playbook
+will ask to create a pwd:
+confirm:
+
+ansible-vault view test_pravin.yml ----------------to see the contents of encrypted playbook
+(here vim, nano etc editor not works)
+
+
+
+ansible-vault edit test_pravin.yml ----------------to edit the encrypted playbook
+
+ansible-vault rekey test_pravin.yml ----------------to change the encrypted playbook
+
+ansible-vault decrypt test_pravin.yml ----------------to decrypt the playbook
+
+ansible-vault encrypt xyz.yml---------------to encrypt the existing playbook
+---------------------------------------------------------------------------------------------------------
+
+ansible-galaxy init role_name----------------------to create role
+
+----------------------------------------------------------------------------------------
+- name: This playbook is to running commands
+  host: all
+  become: true
+  tasks:
+   - name: my linux commands
+     command: yum install mysql - y &&  command_2 && command_3
+                         or
+      command: yum install mysql - y;  command_2; command_3
+     
+
+
+
+
+
+
+
+
+
+
+
+
+     
+
+
+
+
+
+
+
+
+
