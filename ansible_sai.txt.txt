@@ -115,7 +115,7 @@ ansible-playbook abc.yml -b    -----------here -b is become true
        state: present
 
 ---------------------------------------------------------------------------------
-(when moule is a conditinal . it will work as per define the condition. )
+(when moudle is a conditinal . it will work as per define the condition. )
 
 - name: This playbook is to install httpd/apache2
   host: all
