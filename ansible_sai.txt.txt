@@ -176,7 +176,7 @@ notify: starting (httpd) service --------------------------------means after ins
 
 
 
--------------------------------------------------------------ansible-playbook abc.yml -extra-var user=xyz
+-------------------------------------------------------------ansible-playbook abc.yml --extra-var user=xyz
 ---
 - name: This playbook is create user
   host: all
