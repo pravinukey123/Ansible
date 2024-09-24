@@ -109,7 +109,7 @@ ansible-playbook abc.yml -b    -----------here -b is become true
      notify:  starting service
 
   handlers:
-   - name: startins service
+   - name: starting service
      service: httpd
        name: httpd
        state: present
