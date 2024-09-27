@@ -184,7 +184,7 @@ b) gather_facts: no ------ will not work
       debug:
         msg: "{{ansible_selinux_python_present}}"
 
-14) ignore errors --- if anone script will not running / for exception put ignore_errors: yes
+14) ignore errors --- if anyone script will not running / for exception put ignore_errors: yes
 
 - name: playbook_3
   hosts: all
@@ -383,6 +383,26 @@ in file write {{demo}}
       debug:
        msg: "Distribution name of Linux: {{ansible_distribution}}"
       when: ansible_distribution == "centos" or ansible_distribution == "Ubuntu"
+
+28) install number of items in a single loop
+
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: install list of packages
+      apt:
+        name: "{{ item  }}"
+        state: present
+      with_items:
+        - git
+        - apache2
+        - zip
+        - unzip
+        - nano
+        - wget
+...
+~     
 
 
 
