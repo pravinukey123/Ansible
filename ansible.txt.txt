@@ -402,7 +402,18 @@ in file write {{demo}}
         - nano
         - wget
 ...
-~     
+---
+- hosts: all
+  become: true
+  tasks: 
+   - name: user with or without HD
+     user: 
+      name: "{{item.username}}"
+      create_home: "{{item.createhome}}"
+     with_items:
+      - {'username': 'Sachin', 'createhome': 'true'}
+      - {'username': 'Virat', 'createhome': 'true'}
+...     
 
 
 
