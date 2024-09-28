@@ -415,5 +415,41 @@ in file write {{demo}}
       - {'username': 'Virat', 'createhome': 'true'}
 ...     
 
+ansible-playbook installApacheHttpServerwithTags.yaml --list-tags <------- can see the how many tags are in playbook
+
+ansible-playbook installApacheHttpServerwithTags.yaml --tags 'tag-name'   <----if we want to run specific task
+
+ansible-playbook installApacheHttpServerwithTags.yaml --tags 'tag-name1, tag-name-2'   <----if we want to use multiple tags
+
+ansible-playbook installApacheHttpServerwithTags.yaml --skip-tags 'tag-name'
+<--- we can skip the tag
+
+
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install Apache2 server
+      tags:
+        - install
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache2 Server
+      tags:
+        - start
+        - install
+      service:
+        name: httpd
+        enabled: true
+        state: started
+
+    - name: Copy index.html file
+      tags:
+        - copy
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
 
 
